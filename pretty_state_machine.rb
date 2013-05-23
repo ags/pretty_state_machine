@@ -20,7 +20,8 @@ module PrettyStateMachine
   module Extensions
     private
     def _machine(attribute)
-      @_machine ||= Machine.new(self, attribute)
+      @_machines ||= {}
+      @_machines[attribute] ||= Machine.new(self)
     end
   end
 
@@ -50,7 +51,7 @@ module PrettyStateMachine
     def self.state(*)
     end
 
-    def initialize(master, attribute)
+    def initialize(master)
       @master = master
       @state = @@initial_state
     end
