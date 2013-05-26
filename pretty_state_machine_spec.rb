@@ -8,13 +8,15 @@ describe PrettyStateMachine::Machine do
 
     state :down_in_it
 
+    state :gave_up
+
     transition :get_down! do
-      from [:up_above_it]
+      from :up_above_it
       to :down_in_it
     end
 
     transition :give_up! do
-      from  [:down_in_it]
+      from :down_in_it
       to :gave_up
     end
   end
