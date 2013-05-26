@@ -14,9 +14,8 @@ module PrettyStateMachine
       states.values.find(&:initial?)
     end
 
-    def self.state(name, options={}, &block)
-      state = State.new(name, initial: options[:initial])
-      state.instance_eval(&block) if block_given?
+    def self.state(name, initial: false)
+      state = State.new(name, initial: initial)
       states[name] = state
     end
 
