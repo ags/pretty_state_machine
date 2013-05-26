@@ -1,74 +1,87 @@
+require 'set'
+
 module PrettyStateMachine
-  module ClassExtensions
-    def state_machine(klass, attribute: :state)
-      include PrettyStateMachine::Extensions
-
-      instance_eval do
-        define_method(attribute) do
-          _machine(attribute).state
-        end
-
-        klass.transitions.each do |name, transition|
-          define_method(transition.name) do
-            _machine(attribute).transition_via(transition)
-          end
-        end
-      end
-    end
-  end
-
-  module Extensions
-    private
-    def _machine(attribute)
-      @_machines ||= {}
-      @_machines[attribute] ||= Machine.new(self)
-    end
-  end
-
-  class Transition < Struct.new(:name, :from, :to)
-    def valid_from?(state)
-      from.include?(state)
-    end
-  end
-
   class Machine
-    attr_reader :state
-
-    def self.initial_state(name)
-      @@initial_state = name
-    end
-
-    # TODO to should be required, from not
-    def self.transition(name, from: nil, to: nil)
-      @@transitions ||= {}
-      @@transitions[name] = Transition.new(name, from, to)
+    def self.states
+      @states ||= {}
     end
 
     def self.transitions
-      @@transitions
+      @transitions ||= {}
     end
 
-    def self.state(*)
+    def self.initial_state
+      @states.values.find(&:initial?)
     end
 
-    def initialize(master)
-      @master = master
-      @state = @@initial_state
+    def self.state(name, options={}, &block)
+      state = State.new(name, initial: options[:initial])
+      state.instance_eval(&block) if block_given?
+      states[name] = state
     end
 
-    def transition_via(transition)
-      if transition.valid_from?(@state)
-        @state = transition.to
-      else
-        raise InvalidTransition.new("cannot transition to '#{transition.to}' via '#{transition.name}' from '#{@state}'")
+    def self.transition(name, &block)
+      transition = Transition.new(name)
+      transition.instance_eval(&block)
+
+      define_method(name) do
+        if transition.permitted_from?(@state.name)
+          @state = self.class.states[transition.to_state_name]
+        else
+          raise InvalidTransition, "cannot transition to '#{transition.to_state_name}' via '#{name}' from '#{@state.name}'"
+        end
+      end
+
+      transitions[name] = transition
+    end
+
+    def initialize(state=nil)
+      @state = self.class.states.fetch(state) { self.class.initial_state }
+      if @state.nil?
+        raise InvalidMachine.new('an initial state is required')
       end
     end
 
+    def state
+      @state.name
+    end
   end
 
-  InvalidTransition = Class.new(Exception)
-end
+  class State
+    attr_reader :name
 
-Class.class_eval do
-  include PrettyStateMachine::ClassExtensions
+    def initialize(name, initial: false)
+      @name = name
+      @initial = initial
+    end
+
+    def initial?
+      @initial
+    end
+  end
+
+  class Transition
+    attr_reader :to_state_name
+    attr_reader :from_state_names
+
+    def from(state_names)
+      @from_state_names = Set.new(state_names)
+    end
+
+    def to(state_name)
+      @to_state_name = state_name
+    end
+
+    def initialize(name)
+      @name = name
+      @from_state_names = Set.new
+    end
+
+    def permitted_from?(state_name)
+      from_state_names.include?(state_name)
+    end
+  end
+
+  InvalidMachine = Class.new(Exception)
+  InvalidTransition = Class.new(Exception)
 end

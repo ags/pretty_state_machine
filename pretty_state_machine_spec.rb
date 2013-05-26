@@ -1,40 +1,57 @@
 require_relative 'pretty_state_machine'
 
-describe PrettyStateMachine do
+describe PrettyStateMachine::Machine do
+  class Empty < PrettyStateMachine::Machine; end
 
   class Reznor < PrettyStateMachine::Machine
-    initial_state :up_above_it
-
-    transition :get_down,
-      from: [:up_above_it],
-      to: :down_in_it
+    state :up_above_it, initial: true do
+    end
 
     state :down_in_it
+
+    transition :get_down! do
+      from [:up_above_it]
+      to :down_in_it
+    end
+
+    transition :give_up! do
+      from  [:down_in_it]
+      to :gave_up
+    end
   end
 
-  class Foo; state_machine Reznor; end
-  class Bar; state_machine Reznor, attribute: :baz; end
-
-  it "allows declaration of an initial state" do
-    expect(Foo.new.state).to eq(:up_above_it)
+  it "sets state to provided initial state on creation" do
+    expect(Reznor.new.state).to eq(:up_above_it)
   end
 
-  it "allows transitions via methods" do
-    machine = Foo.new
+  it "initial state can be overriden on initialization" do
+    expect(Reznor.new(:down_in_it).state).to eq(:down_in_it)
+  end
+
+  it "raises InvalidMachine without an initial state" do
     expect do
-      machine.get_down
-    end.to change { machine.state }.to(:down_in_it)
+      Empty.new
+    end.to raise_error(PrettyStateMachine::InvalidMachine,
+                       'an initial state is required')
   end
 
-  it "throws InvalidTransition for invalid transitions" do
-    machine = Foo.new
-    machine.get_down
+  it "defines transition methods that change state" do
+    machine = Reznor.new
     expect do
-      machine.get_down
-    end.to raise_error(PrettyStateMachine::InvalidTransition, "cannot transition to 'down_in_it' via 'get_down' from 'down_in_it'")
+      machine.get_down!
+    end.to change { machine.state }.from(:up_above_it).to(:down_in_it)
   end
 
-  it "allows specification of state attribute" do
-    expect(Bar.new.baz).to eq(:up_above_it)
+  it "does not allow definition of transitions without a to"
+
+  it "enforces transition from declarations" do
+    machine = Reznor.new
+    expect do
+      machine.give_up!
+    end.to raise_error(PrettyStateMachine::InvalidTransition,
+                       "cannot transition to 'gave_up' via 'give_up!' from 'up_above_it'")
   end
+
+  context "when given an invalid initial state"
+
 end
