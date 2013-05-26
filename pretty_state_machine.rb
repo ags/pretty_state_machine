@@ -3,15 +3,15 @@ require 'set'
 module PrettyStateMachine
   class Machine
     def self.states
-      @states ||= {}
+      @_states ||= {}
     end
 
     def self.transitions
-      @transitions ||= {}
+      @_transitions ||= {}
     end
 
     def self.initial_state
-      @states.values.find(&:initial?)
+      states.values.find(&:initial?)
     end
 
     def self.state(name, options={}, &block)
@@ -36,7 +36,12 @@ module PrettyStateMachine
     end
 
     def initialize(state=nil)
-      @state = self.class.states.fetch(state) { self.class.initial_state }
+      if state.nil?
+        @state = self.class.initial_state
+      else
+        @state = self.class.states.fetch(state) { raise InvalidMachine }
+      end
+
       if @state.nil?
         raise InvalidMachine.new('an initial state is required')
       end

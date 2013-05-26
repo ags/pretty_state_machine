@@ -4,8 +4,7 @@ describe PrettyStateMachine::Machine do
   class Empty < PrettyStateMachine::Machine; end
 
   class Reznor < PrettyStateMachine::Machine
-    state :up_above_it, initial: true do
-    end
+    state :up_above_it, initial: true
 
     state :down_in_it
 
@@ -52,6 +51,12 @@ describe PrettyStateMachine::Machine do
                        "cannot transition to 'gave_up' via 'give_up!' from 'up_above_it'")
   end
 
-  context "when given an invalid initial state"
+  context "when given an invalid initial state" do
+    it "raises PrettyStateMachine::InvalidMachine" do
+      expect do
+        Reznor.new(:foobar)
+      end.to raise_error(PrettyStateMachine::InvalidMachine)
+    end
+  end
 
 end
