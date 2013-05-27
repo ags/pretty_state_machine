@@ -43,7 +43,15 @@ describe PrettyStateMachine::Machine do
     end.to change { machine.state }.from(:up_above_it).to(:down_in_it)
   end
 
-  it "does not allow definition of transitions without a to"
+  it "does not allow definition of transitions without a to" do
+    expect do
+      class NoTransitionTo < PrettyStateMachine::Machine
+        state :foo, initial: true
+        transition :bar do from :foo end
+      end
+    end.to raise_error(PrettyStateMachine::InvalidTransition,
+                       "transition 'bar' requires an end state")
+  end
 
   it "enforces transition from declarations" do
     machine = Reznor.new

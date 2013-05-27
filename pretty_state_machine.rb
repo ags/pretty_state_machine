@@ -31,6 +31,10 @@ module PrettyStateMachine
         end
       end
 
+      if transition.to_state.nil?
+        raise InvalidTransition, "transition '#{name}' requires an end state"
+      end
+
       transitions[name] = transition
     end
 
