@@ -62,10 +62,11 @@ describe PrettyStateMachine::Machine do
   end
 
   context "when given an invalid initial state" do
-    it "raises PrettyStateMachine::InvalidMachine" do
+    it "raises PrettyStateMachine::InvalidState" do
       expect do
         Reznor.new(:foobar)
-      end.to raise_error(PrettyStateMachine::InvalidMachine)
+      end.to raise_error(PrettyStateMachine::InvalidState,
+                         "'foobar' is an invalid state")
     end
   end
 

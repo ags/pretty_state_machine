@@ -49,16 +49,14 @@ module PrettyStateMachine
 
     def self.state_from_name(state_name)
       states.fetch(state_name) do
-        raise InvalidState.new("#{state_name} is invalid state")
+        raise InvalidState.new("'#{state_name}' is an invalid state")
       end
     end
 
     def State(arg)
       case arg
-      when State then
-        arg
-      when Symbol then
-        self.class.states.fetch(arg) { raise InvalidMachine }
+      when State then arg
+      when Symbol then self.class.state_from_name(arg)
       else
         raise TypeError, "cannot convert #{arg.inspect} to State"
       end
