@@ -1,4 +1,4 @@
-require_relative 'pretty_state_machine'
+require './lib/pretty_state_machine'
 
 describe PrettyStateMachine::Machine do
   class Empty < PrettyStateMachine::Machine; end

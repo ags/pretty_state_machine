@@ -1,4 +1,5 @@
-require 'forwardable'
+require_relative './state'
+require_relative './transition'
 
 module PrettyStateMachine
   class Machine
@@ -63,49 +64,4 @@ module PrettyStateMachine
     end
 
   end
-
-  class State
-    extend Forwardable
-
-    attr_reader :name
-
-    def_delegator :name, :to_s
-
-    def initialize(name, initial: false)
-      @name = name
-      @initial = initial
-    end
-
-    def initial?
-      @initial
-    end
-  end
-
-  class Transition
-    attr_reader :to_state
-
-    def from(*state_names)
-      @from_states = state_names.flatten.compact.map { |state_name|
-        @machine_class.state_from_name(state_name)
-      }
-    end
-
-    def to(state_name)
-      @to_state = @machine_class.state_from_name(state_name)
-    end
-
-    def initialize(machine_class, name)
-      @machine_class = machine_class
-      @name = name
-      @from_states = []
-    end
-
-    def permitted_from?(state)
-      @from_states.include?(state)
-    end
-  end
-
-  InvalidMachine = Class.new(Exception)
-  InvalidTransition = Class.new(Exception)
-  InvalidState = Class.new(Exception)
 end
