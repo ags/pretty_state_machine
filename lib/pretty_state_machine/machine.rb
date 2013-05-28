@@ -1,6 +1,3 @@
-require_relative './state'
-require_relative './transition'
-
 module PrettyStateMachine
   class Machine
     def self.states
@@ -39,16 +36,9 @@ module PrettyStateMachine
       transitions[name] = transition
     end
 
-    def initialize(state=nil)
-      if state.nil?
-        @state = self.class.initial_state
-      else
-        @state = self.class.states.fetch(state) { raise InvalidMachine }
-      end
-
-      if @state.nil?
-        raise InvalidMachine.new('an initial state is required')
-      end
+    def initialize(state=self.class.initial_state)
+      raise InvalidMachine.new('an initial state is required') if state.nil?
+      @state = State(state)
     end
 
     def state
@@ -60,6 +50,17 @@ module PrettyStateMachine
     def self.state_from_name(state_name)
       states.fetch(state_name) do
         raise InvalidState.new("#{state_name} is invalid state")
+      end
+    end
+
+    def State(arg)
+      case arg
+      when State then
+        arg
+      when Symbol then
+        self.class.states.fetch(arg) { raise InvalidMachine }
+      else
+        raise TypeError, "cannot convert #{arg.inspect} to State"
       end
     end
 
