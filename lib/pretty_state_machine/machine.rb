@@ -21,16 +21,16 @@ module PrettyStateMachine
       transition = Transition.new(self, name)
       transition.instance_eval(&block)
 
+      if transition.to_state.nil?
+        raise InvalidTransition, "transition '#{name}' requires an end state"
+      end
+
       define_method(name) do
         if transition.permitted_from?(@state)
           @state = transition.to_state
         else
           raise InvalidTransition, "cannot transition to '#{transition.to_state}' via '#{name}' from '#{@state}'"
         end
-      end
-
-      if transition.to_state.nil?
-        raise InvalidTransition, "transition '#{name}' requires an end state"
       end
 
       transitions[name] = transition
