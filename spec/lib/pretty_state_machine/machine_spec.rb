@@ -59,6 +59,7 @@ describe PrettyStateMachine::Machine do
       machine.give_up!
     end.to raise_error(PrettyStateMachine::InvalidTransition,
                        "cannot transition to 'gave_up' via 'give_up!' from 'up_above_it'")
+    expect(machine.state).to eq(:up_above_it)
   end
 
   context "when given an invalid initial state" do
