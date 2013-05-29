@@ -1,6 +1,6 @@
-require 'pretty_state_machine/machine'
-require 'pretty_state_machine/state'
-require 'pretty_state_machine/transition'
+require_relative 'pretty_state_machine/machine'
+require_relative 'pretty_state_machine/state'
+require_relative 'pretty_state_machine/transition'
 
 module PrettyStateMachine
   InvalidMachine = Class.new(Exception)
