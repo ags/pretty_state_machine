@@ -18,7 +18,7 @@ class Reznor < PrettyStateMachine::Machine
   end
 
   transition :give_up! do
-    from :down_in_it
+    from :up_above_it, :down_in_it
     to :gave_up
   end
 end
