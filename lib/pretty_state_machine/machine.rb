@@ -1,5 +1,8 @@
 module PrettyStateMachine
   class Machine
+
+    attr_reader :state
+
     def self.states
       @_states ||= {}
     end
@@ -39,10 +42,6 @@ module PrettyStateMachine
     def initialize(state=self.class.initial_state)
       raise InvalidMachine.new('an initial state is required') if state.nil?
       @state = State(state)
-    end
-
-    def state
-      @state.name
     end
 
     protected

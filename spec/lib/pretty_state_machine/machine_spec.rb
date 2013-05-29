@@ -22,11 +22,11 @@ describe PrettyStateMachine::Machine do
   end
 
   it "sets state to provided initial state on creation" do
-    expect(Reznor.new.state).to eq(:up_above_it)
+    expect(Reznor.new.state.name).to eq(:up_above_it)
   end
 
   it "initial state can be overriden on initialization" do
-    expect(Reznor.new(:down_in_it).state).to eq(:down_in_it)
+    expect(Reznor.new(:down_in_it).state.name).to eq(:down_in_it)
   end
 
   it "raises InvalidMachine without an initial state" do
@@ -40,7 +40,7 @@ describe PrettyStateMachine::Machine do
     machine = Reznor.new
     expect do
       machine.get_down!
-    end.to change { machine.state }.from(:up_above_it).to(:down_in_it)
+    end.to change { machine.state.name }.from(:up_above_it).to(:down_in_it)
   end
 
   it "does not allow definition of transitions without a to" do
@@ -59,7 +59,7 @@ describe PrettyStateMachine::Machine do
       machine.give_up!
     end.to raise_error(PrettyStateMachine::InvalidTransition,
                        "cannot transition to 'gave_up' via 'give_up!' from 'up_above_it'")
-    expect(machine.state).to eq(:up_above_it)
+    expect(machine.state.name).to eq(:up_above_it)
   end
 
   context "when given an invalid initial state" do
