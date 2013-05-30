@@ -15,7 +15,8 @@ module PrettyStateMachine
       states.values.find(&:initial?)
     end
 
-    def self.state(name, initial: false)
+    def self.state(name, options={})
+      initial = options.fetch(:initial) { false }
       state = State.new(name, initial: initial)
       states[name] = state
     end

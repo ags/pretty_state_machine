@@ -8,9 +8,9 @@ module PrettyStateMachine
 
     def_delegator :name, :to_s
 
-    def initialize(name, initial: false)
+    def initialize(name, options={})
       @name = name
-      @initial = initial
+      @initial = options.fetch(:initial) { false }
     end
 
     def initial?
