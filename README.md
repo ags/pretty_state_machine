@@ -3,6 +3,8 @@
 Pretty State Machine
 ====================
 
+Simple FSM class-oriented DSL. Somewhere between [MicroMachine](https://github.com/soveran/micromachine) and [state_machine](https://github.com/pluginaweek/state_machine/).
+
 Usage
 -----
 
