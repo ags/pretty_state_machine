@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/ags/pretty_state_machine.png?branch=master)](https://travis-ci.org/ags/pretty_state_machine)
+
 Pretty State Machine
 ====================
 
