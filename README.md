@@ -1,12 +1,9 @@
-[![Build Status](https://travis-ci.org/ags/pretty_state_machine.png?branch=master)](https://travis-ci.org/ags/pretty_state_machine)
 
-Pretty State Machine
-====================
+# Pretty State Machine [![Build Status](https://travis-ci.org/ags/pretty_state_machine.png?branch=master)](https://travis-ci.org/ags/pretty_state_machine)
 
 Simple FSM class-oriented DSL. Somewhere between [MicroMachine](https://github.com/soveran/micromachine) and [state_machine](https://github.com/pluginaweek/state_machine/).
 
-Usage
------
+## Usage
 
 ```ruby
 class Reznor < PrettyStateMachine::Machine
